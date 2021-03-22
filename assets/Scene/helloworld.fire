@@ -6550,7 +6550,7 @@
         "__id__": 141
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 144
@@ -6567,8 +6567,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 160,
-      "height": 40
+      "width": 200,
+      "height": 60
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -6632,8 +6632,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 160,
-      "height": 40
+      "width": 200,
+      "height": 60
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -6806,7 +6806,7 @@
     "_dstBlendFactor": 771,
     "_string": "",
     "_N$string": "",
-    "_fontSize": 20,
+    "_fontSize": 40,
     "_lineHeight": 25,
     "_enableWrapText": false,
     "_N$file": null,
@@ -6877,8 +6877,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 158,
-      "height": 40
+      "width": 198,
+      "height": 60
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -6889,8 +6889,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -78,
-        20,
+        -98,
+        30,
         0,
         0,
         0,
@@ -7012,7 +7012,7 @@
       "__id__": 2
     },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 146
@@ -7272,7 +7272,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 280,
-      "height": 580
+      "height": 180
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -7366,7 +7366,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 300,
-      "height": 550
+      "height": 200
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -7479,7 +7479,7 @@
       "ctor": "Float64Array",
       "array": [
         4.399,
-        -254.039,
+        -71.094,
         0,
         0,
         0,
@@ -7580,8 +7580,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "确定",
-    "_N$string": "确定",
+    "_string": "开始",
+    "_N$string": "开始",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -7716,7 +7716,7 @@
         "__id__": 165
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 168
@@ -8265,7 +8265,7 @@
         "__id__": 175
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 177
@@ -8696,7 +8696,7 @@
         "__id__": 183
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 185
@@ -9127,7 +9127,7 @@
         "__id__": 191
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 193
@@ -9558,7 +9558,7 @@
         "__id__": 199
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 201
@@ -9989,7 +9989,7 @@
         "__id__": 207
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 209
@@ -10420,7 +10420,7 @@
         "__id__": 215
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 217
@@ -10848,7 +10848,7 @@
         "__id__": 227
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 235

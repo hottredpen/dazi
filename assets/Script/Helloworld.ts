@@ -203,7 +203,7 @@ export default class Helloworld extends cc.Component {
         }
 
         if(this.all_string_arr.length == 0){
-            this.all_string_arr = ['n','i',',','h','a','o','!']
+            this.all_string_arr = ['#','@','*','、','！','？']
         }
 
         if(this.is_open_rand){
