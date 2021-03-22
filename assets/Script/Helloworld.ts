@@ -1,5 +1,6 @@
 const {ccclass, property} = cc._decorator;
 import PrintChar from "./PrintChar";
+// import HttpUtil from "./utils/HttpUtil";
 @ccclass
 export default class Helloworld extends cc.Component {
 
@@ -43,12 +44,12 @@ export default class Helloworld extends cc.Component {
     menuBtn:cc.Button = null
     winBtn:cc.Button = null
 
-    open_number:boolean = true
-    open_letter:boolean = true
-    open_letterupper:boolean = true
-    open_fuhao:boolean = true
-    open_zwfuhao:boolean = true
-    open_custom:boolean = true
+    open_number:boolean = false
+    open_letter:boolean = false
+    open_letterupper:boolean = false
+    open_fuhao:boolean = false
+    open_zwfuhao:boolean = false
+    open_custom:boolean = false
 
 
     all_number_arr:Array<string> = []
@@ -70,9 +71,10 @@ export default class Helloworld extends cc.Component {
     is_open_rand:boolean = true
 
     youWinMenu:cc.Node = null
+    http_custom_arr:Array<string> = []
 
     onLoad(){
-        this.is_open_rand = true
+        this.is_open_rand = false
         // this.startBtn = this.node.getChildByName('startBtn')
         this.menu = this.node.getChildByName('menu')
         this.settingBtn = this.node.getChildByName('settingBtn').getComponent(cc.Button)
@@ -85,6 +87,14 @@ export default class Helloworld extends cc.Component {
         this.menuBtn.node.on(cc.Node.EventType.TOUCH_START, this.startPlay, this);
         this.winBtn.node.on(cc.Node.EventType.TOUCH_START, this.closeWin, this);
 
+
+
+        this.numberToggle.isChecked = false
+        this.letterToggle.isChecked = false
+        this.letterupperToggle.isChecked = false
+        this.fuhaoToggle.isChecked = false
+        this.zwfuhaoToggle.isChecked = false
+        this.customToggle.isChecked = false
 
         this.numberToggle.node.on('toggle', this.numbercallback, this);
         this.letterToggle.node.on('toggle', this.letterTogglecallback, this);
@@ -103,6 +113,9 @@ export default class Helloworld extends cc.Component {
         this.print_char_arr = ['~','$','1',':',';','：','；']
         this.print_char_index = 0
         // this.c001 = cc.find('Canvas/jian/xin/c01')
+
+ 
+
 
     }
     togetherMenu(){
@@ -177,14 +190,17 @@ export default class Helloworld extends cc.Component {
         if(this.open_zwfuhao){
             this.all_string_arr = this.all_string_arr.concat(this.all_zwfuhao_arr);
         }
+
+        let allString = this.node.getChildByName('menu').getChildByName('allString').getChildByName('TEXT_LABEL').getComponent(cc.Label).string
+        let _custom_arr = allString.split('')
         if(this.open_custom){
-            let allString = this.node.getChildByName('menu').getChildByName('allString').getChildByName('TEXT_LABEL').getComponent(cc.Label).string
-            let _custom_arr = allString.split('')
             if(_custom_arr.length > 0){
                 this.all_string_arr = this.all_string_arr.concat(_custom_arr);
             }
         }
-        
+        if(_custom_arr.length == 0){
+            this.all_string_arr = this.all_string_arr.concat(this.http_custom_arr);
+        }
 
         if(this.all_string_arr.length == 0){
             this.all_string_arr = ['n','i',',','h','a','o','!']
@@ -269,6 +285,11 @@ export default class Helloworld extends cc.Component {
     }
 
     start () {
+
+        this.httpGet("http://dazi.jk-kj.com/diy.json", (res) => {
+            this.http_custom_arr = res
+        })
+
         // console.log('start')
 
         this.all_number_arr = ['0','1','2','3','4','5','6','7','8','9']
@@ -557,5 +578,41 @@ export default class Helloworld extends cc.Component {
     //         break;
     //     }
     // }
-
+    httpGet(url, callback) {
+        // cc.myGame.gameUi.onShowLockScreen();
+        let xhr = cc.loader.getXMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            // cc.log("Get: readyState:" + xhr.readyState + " status:" + xhr.status);
+            if (xhr.readyState === 4 && xhr.status == 200) {
+                let respone = xhr.responseText;
+                let rsp = JSON.parse(respone);
+                // cc.myGame.gameUi.onHideLockScreen();
+                callback(rsp);
+            } else if (xhr.readyState === 4 && xhr.status == 401) {
+                // cc.myGame.gameUi.onHideLockScreen();
+                callback({status:401});
+            } else {
+                //callback(-1);
+            }
+ 
+ 
+        };
+        xhr.withCredentials = true;
+        xhr.open('GET', url, true);
+ 
+        // if (cc.sys.isNative) {
+        xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+        xhr.setRequestHeader('Access-Control-Allow-Methods', 'GET, POST');
+        xhr.setRequestHeader('Access-Control-Allow-Headers', 'x-requested-with,content-type,authorization');
+        xhr.setRequestHeader("Content-Type", "application/json");
+        // xhr.setRequestHeader('Authorization', 'Bearer ' + cc.myGame.gameManager.getToken());
+        // xhr.setRequestHeader('Authorization', 'Bearer ' + "");
+        // }
+ 
+        // note: In Internet Explorer, the timeout property may be set only after calling the open()
+        // method and before calling the send() method.
+        xhr.timeout = 8000;// 8 seconds for timeout
+ 
+        xhr.send();
+    }
 }
