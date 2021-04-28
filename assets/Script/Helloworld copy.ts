@@ -61,7 +61,7 @@ export default class Helloworld extends cc.Component {
     all_zwfuhao_arr:Array<string> = []
     all_custom_arr:Array<string> = []
 
-    all_number_keycode_arr:Array<Number> = null;
+    all_number_keycode:Array<Number> = null;
 
 
     // 整条生成的需要打印的文字
@@ -82,11 +82,7 @@ export default class Helloworld extends cc.Component {
 
     has_down_keycode_arr:Array<Number> = []
 
-    is_chinese:boolean = false
-    langBtn:cc.Button = null
-
     onLoad(){
-        this.is_chinese = false
         this.is_open_rand = false
         // this.startBtn = this.node.getChildByName('startBtn')
         this.menu = this.node.getChildByName('menu')
@@ -94,12 +90,11 @@ export default class Helloworld extends cc.Component {
         this.menuBtn = this.node.getChildByName('menu').getChildByName('btn').getComponent(cc.Button)
         this.winBtn = this.node.getChildByName('youWinMenu').getChildByName('btn').getComponent(cc.Button)
         this.youWinMenu = this.node.getChildByName('youWinMenu')
-        this.langBtn = this.node.getChildByName('lang_trans').getComponent(cc.Button)
+
         // this.startBtn.on(cc.Node.EventType.TOUCH_START, this.startPlay, this);
         this.settingBtn.node.on(cc.Node.EventType.TOUCH_START, this.togetherMenu, this);
         this.menuBtn.node.on(cc.Node.EventType.TOUCH_START, this.startPlay, this);
         this.winBtn.node.on(cc.Node.EventType.TOUCH_START, this.closeWin, this);
-        this.langBtn.node.on(cc.Node.EventType.TOUCH_START, this.langBtnClick, this);
 
 
 
@@ -128,21 +123,19 @@ export default class Helloworld extends cc.Component {
         this.print_char_index = 0
         // this.c001 = cc.find('Canvas/jian/xin/c01')
 
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
+        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+
 
         this.all_number_arr = ['0','1','2','3','4','5','6','7','8','9']
-        this.all_number_zh_arr = ['）','！','@','#','￥','%','……','&','*','（']
         this.all_number_tran_arr = [')','!','@','#','$','%','^','&','*','(']
-        this.all_number_keycode_arr = [48,49,50,51,52,53,54,55,56,57]
-        
+        this.all_number_zh_arr = ['）','！','@','#','￥','%','……','&','*','（']
         this.all_letter_arr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
         this.all_letterupper_arr = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
         this.all_fuhao_arr = ['~','`','!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|','\\',':',';','"','\'','<','>',',','.','?','/'];
         this.all_zwfuhao_arr = ['~','·','！','@','#','￥','%','……','&','*','（','）','-','——','+','=','「','」','【','】','|','、','：','；','“','”','‘','’','《','》','，','。','？','、'];
 
-        
-
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
+        this.all_number_keycode = [48,49,50,51,52,53,54,55,56,57];
 
     }
     onDestroy () {
@@ -150,6 +143,7 @@ export default class Helloworld extends cc.Component {
         cc.systemEvent.off(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
     }
     onKeyDown(e){
+        
         if(this.has_down_keycode_arr.indexOf(e.keyCode) == -1){
             this.has_down_keycode_arr.push(e.keyCode)
         }
@@ -157,46 +151,173 @@ export default class Helloworld extends cc.Component {
         console.log(JSON.stringify(this.has_down_keycode_arr) )
         console.log('key down')
         console.log('e.keyCode',e.keyCode)
-        if(this.all_number_keycode_arr.indexOf(e.keyCode) > -1){
-            this.xin.getChildByName('c_'+e.keyCode).color = cc.Color.GREEN
-            setTimeout(() =>{
-                this.xin.getChildByName('c_'+e.keyCode).color = new cc.Color(255,255,255,255);
-            },100)
-        }
+        let that = this
+
+
+                // 数字
+                // let all_number_arr = ['0','1','2','3','4','5','6','7','8','9']
+                if(this.all_number_keycode.indexOf(e.keyCode) > -1){
+                    that.xin.getChildByName('c_'+e.keyCode).color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('c_'+e.keyCode).color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                // 字母
+                // let all_letter_arr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+                if(this.all_letter_arr.indexOf(e.keyCode) > -1){
+                    that.xin.getChildByName(e.keyCode).color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName(e.keyCode).color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                // 符号
+                if(e.keyCode == 192){ // ~`
+                    that.xin.getChildByName('bl').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('bl').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 189){ // -_
+                    that.xin.getChildByName('jian').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('jian').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 187){ // +=
+                    that.xin.getChildByName('jia').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('jia').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 8){ // delete
+                    that.xin.getChildByName('del').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('del').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 219){ // {[
+                    that.xin.getChildByName('zkh').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('zkh').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 221){ // }]
+                    that.xin.getChildByName('ykh').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('ykh').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 220){ // |\
+                    that.xin.getChildByName('shu').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('shu').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 186){ // :;
+                    that.xin.getChildByName('mh').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('mh').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 222){ // "'
+                    that.xin.getChildByName('yh').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('yh').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 188){ // <,
+                    that.xin.getChildByName('xyh').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('xyh').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 190){ // >.
+                    that.xin.getChildByName('dyh').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('dyh').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 191){ // ?/
+                    that.xin.getChildByName('wh').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('wh').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                // 功能键
+                if(e.keyCode == 9){ // 
+                    that.xin.getChildByName('tab').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('tab').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 20){ // 
+                    that.xin.getChildByName('lock').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('lock').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 16){ // 
+                    that.xin.getChildByName('shift-l').color = cc.Color.GREEN
+                    that.xin.getChildByName('shift-r').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('shift-l').color = new cc.Color(255,255,255,255);
+                        that.xin.getChildByName('shift-r').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 17){ // 
+                    that.xin.getChildByName('ctrl-l').color = cc.Color.GREEN
+                    that.xin.getChildByName('ctrl-r').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('ctrl-l').color = new cc.Color(255,255,255,255);
+                        that.xin.getChildByName('ctrl-r').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 18){ // 
+                    that.xin.getChildByName('alt-l').color = cc.Color.GREEN
+                    that.xin.getChildByName('alt-r').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('alt-l').color = new cc.Color(255,255,255,255);
+                        that.xin.getChildByName('alt-r').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 32){ // 
+                    that.xin.getChildByName('space').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('space').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+                if(e.keyCode == 13){ // 
+                    that.xin.getChildByName('enter').color = cc.Color.GREEN
+                    setTimeout(() =>{
+                        that.xin.getChildByName('enter').color = new cc.Color(255,255,255,255);
+                    },100)
+                }
+
+
+
     }
     onKeyUp(e){
+        console.log('key up')
+
         let _key_index = this.has_down_keycode_arr.indexOf(e.keyCode)
         if(_key_index > -1){
-            this.has_down_keycode_arr.splice(_key_index,1); // 从has_down_keycode_arr中移除
+            this.has_down_keycode_arr.splice(_key_index,1);
         }
         console.log('this.has_down_keycode_arr')
         console.log(JSON.stringify(this.has_down_keycode_arr) )
-        let _string = '';
-        let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
+
         // 按住shift的情况
         if(this.has_down_keycode_arr.indexOf(16) > -1){
-            if(_in_number_index > -1){
-                if(this.is_chinese){
-                    _string = this.all_number_zh_arr[_in_number_index]
-                }else{
-                    _string = this.all_number_tran_arr[_in_number_index]
-                }
-            }
-        }else{
-            if(_in_number_index > -1){
-                _string = this.all_number_arr[_in_number_index]
-                console.log(_string)
-            }
+            console.log('top')
+            this.addUserPrint('@',this.printCharArray[this.cur_string_at_index].nodeIndex)
         }
-        if(_string != ''){
-            this.addUserPrint(_string,this.printCharArray[this.cur_string_at_index].nodeIndex)
-        }
+
+        let zhj_arr = [9,20,16,17,18,13] // 去除 32(空格)，空格有可能是中文输入完毕
+        // if(zhj_arr.indexOf(e.keyCode) > -1){
+        //     return
+        // }
     }
-    langBtnClick(){
-        this.is_chinese = !this.is_chinese
-        let lang_name = this.is_chinese ? '中' : 'En'
-        this.langBtn.node.getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = lang_name
-    }
+
 
 
     togetherMenu(){
