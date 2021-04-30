@@ -62,6 +62,7 @@ export default class Helloworld extends cc.Component {
     all_zwfuhao_arr:Array<string> = []
     all_custom_arr:Array<string> = []
 
+    all_letter_keycode_arr:Array<Number> = null;
     all_number_keycode_arr:Array<Number> = null;
 
     all_f_arr:Array<string> = []
@@ -92,10 +93,13 @@ export default class Helloworld extends cc.Component {
 
     is_chinese:boolean = false
     langBtn:cc.Button = null
+    is_upper:boolean = false
+    upperBtn:cc.Button = null
 
     onLoad(){
         this.is_chinese = false
-        this.is_open_rand = false
+        this.is_upper = false
+        this.is_open_rand = true
         // this.startBtn = this.node.getChildByName('startBtn')
         this.menu = this.node.getChildByName('menu')
         this.settingBtn = this.node.getChildByName('settingBtn').getComponent(cc.Button)
@@ -103,11 +107,13 @@ export default class Helloworld extends cc.Component {
         this.winBtn = this.node.getChildByName('youWinMenu').getChildByName('btn').getComponent(cc.Button)
         this.youWinMenu = this.node.getChildByName('youWinMenu')
         this.langBtn = this.node.getChildByName('lang_trans').getComponent(cc.Button)
+        this.upperBtn = this.node.getChildByName('upper_trans').getComponent(cc.Button)
         // this.startBtn.on(cc.Node.EventType.TOUCH_START, this.startPlay, this);
         this.settingBtn.node.on(cc.Node.EventType.TOUCH_START, this.togetherMenu, this);
         this.menuBtn.node.on(cc.Node.EventType.TOUCH_START, this.startPlay, this);
         this.winBtn.node.on(cc.Node.EventType.TOUCH_START, this.closeWin, this);
         this.langBtn.node.on(cc.Node.EventType.TOUCH_START, this.langBtnClick, this);
+        this.upperBtn.node.on(cc.Node.EventType.TOUCH_START, this.upperBtnClick, this);
 
 
 
@@ -148,6 +154,7 @@ export default class Helloworld extends cc.Component {
         this.all_fuhao_arr = ['~','`','!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|','\\',':',';','"','\'','<','>',',','.','?','/'];
         this.all_zwfuhao_arr = ['~','·','！','@','#','￥','%','……','&','*','（','）','-','——','+','=','「','」','【','】','|','、','：','；','“','”','‘','’','《','》','，','。','？','、'];
         
+        this.all_letter_keycode_arr = [65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90];
         
         this.all_f_arr = [";","=",",","-",".","/","`","[","\\","]","'"];
         this.all_f_shift_arr = [":","+","<","_",">","？","~","{","|","}","\""];
@@ -156,8 +163,6 @@ export default class Helloworld extends cc.Component {
         this.all_f_keycode_arr = [186,187,188,189,190,191,192,219,220,221,222];
 
         this.all_g_keycode_arr = [8,9,13,16,17,18,20,32,91];
-
-
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
@@ -178,6 +183,7 @@ export default class Helloworld extends cc.Component {
         let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
         let _in_f_index = this.all_f_keycode_arr.indexOf(e.keyCode)
         let _in_g_index = this.all_g_keycode_arr.indexOf(e.keyCode)
+        let _in_z_index = this.all_letter_keycode_arr.indexOf(e.keyCode)
         if(_in_number_index > -1){
             this.xin.getChildByName('c_'+e.keyCode).color = cc.Color.GREEN
             setTimeout(() =>{
@@ -190,8 +196,13 @@ export default class Helloworld extends cc.Component {
                 this.xin.getChildByName('f_'+e.keyCode).color = new cc.Color(255,255,255,255);
             },100)
         }
+        if(_in_z_index > -1){
+            this.xin.getChildByName('z_'+e.keyCode).color = cc.Color.GREEN
+            setTimeout(() =>{
+                this.xin.getChildByName('z_'+e.keyCode).color = new cc.Color(255,255,255,255);
+            },100)
+        }
         if(_in_g_index > -1){
-
             if([16,17,18,91].indexOf(e.keyCode) > -1){
                 this.xin.getChildByName('g_'+e.keyCode+'_l').color = cc.Color.GREEN
                 setTimeout(() =>{
@@ -207,8 +218,6 @@ export default class Helloworld extends cc.Component {
                     this.xin.getChildByName('g_'+e.keyCode).color = new cc.Color(255,255,255,255);
                 },100)
             }
-
-
         }
     }
     onKeyUp(e){
@@ -222,6 +231,7 @@ export default class Helloworld extends cc.Component {
         let _string = '';
         let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
         let _in_f_index = this.all_f_keycode_arr.indexOf(e.keyCode)
+        let _in_z_index = this.all_letter_keycode_arr.indexOf(e.keyCode)
         // 按住ctrl的情况  （可能是切换中中文）
         if(this.has_down_keycode_arr.indexOf(17) > -1){
             if(e.keyCode == 16){
@@ -247,6 +257,13 @@ export default class Helloworld extends cc.Component {
                     _string = this.all_f_shift_arr[_in_f_index]
                 }
             }
+            if(_in_z_index > -1){
+                if(this.is_upper){
+                    _string = this.all_letter_arr[_in_z_index]
+                }else{
+                    _string = this.all_letterupper_arr[_in_z_index]
+                }
+            }
         }else{
             if(_in_number_index > -1){
                 if(this.is_chinese){
@@ -262,17 +279,44 @@ export default class Helloworld extends cc.Component {
                     _string = this.all_f_arr[_in_f_index]
                 }
             }
+            if(_in_z_index > -1){
+                if(this.is_upper){
+                    _string = this.all_letterupper_arr[_in_z_index]
+                }else{
+                    _string = this.all_letter_arr[_in_z_index]
+                }
+            }
         }
         if(_string != ''){
             this.addUserPrint(_string,this.printCharArray[this.cur_string_at_index].nodeIndex)
+            if(_string == this.printCharArray[this.cur_string_at_index].charString){
+                this.printCharArray[this.cur_string_at_index].node.color = cc.Color.YELLOW
+                this.userStringArray[this.cur_string_at_index].node.color = cc.Color.GREEN
+
+                if(this.cur_string_at_index == this.cur_last_index){
+                    setTimeout(() => {
+                        this.nextGroup()
+                    },1000)
+                }
+                this.cur_string_at_index++
+                this.all_string_at_index++
+            }else{
+                this.userStringArray[this.cur_string_at_index].node.color = cc.Color.RED
+            }
         }
     }
     langBtnClick(){
-        console.log('langBtnClick')
         this.is_chinese = !this.is_chinese
         let lang_name = this.is_chinese ? '中' : 'En'
         this.langBtn.node.getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = lang_name
     }
+    upperBtnClick(){
+        this.is_upper = !this.is_upper
+        let upper_name = this.is_upper ? '大写' : '小写'
+        this.upperBtn.node.getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = upper_name
+    }
+
+
     togetherMenu(){
         this.menu.active = !this.menu.active
     }
@@ -300,26 +344,26 @@ export default class Helloworld extends cc.Component {
 
     startPlay(){
         this.menu.active = false
-        this.node.getChildByName('EditBox').active = true
+        // this.node.getChildByName('EditBox').active = true
         // console.log(this.open_number)
         // console.log(this.open_letter)
         // console.log(this.open_letterupper)
         // console.log(this.open_fuhao)
         // console.log(this.open_zwfuhao)
         // console.log(this.open_custom)
-        if(window.document){
-            let that = this
+        // if(window.document){
+        //     let that = this
 
-            let _input = document.getElementById('EditBoxId_1')
-            if(_input){
-                _input.setAttribute("autocomplete","off");
-            }
+        //     let _input = document.getElementById('EditBoxId_1')
+        //     if(_input){
+        //         _input.setAttribute("autocomplete","off");
+        //     }
             
-            let _input2 = document.getElementById('EditBoxId_2')
-            if(_input2){
-                _input2.setAttribute("autocomplete","off");
-            }
-        }
+        //     let _input2 = document.getElementById('EditBoxId_2')
+        //     if(_input2){
+        //         _input2.setAttribute("autocomplete","off");
+        //     }
+        // }
         // console.log(this.is_open_rand)
 
 
@@ -353,9 +397,9 @@ export default class Helloworld extends cc.Component {
                 this.all_string_arr = this.all_string_arr.concat(_custom_arr);
             }
         }
-        if(_custom_arr.length == 0){
-            this.all_string_arr = this.all_string_arr.concat(this.http_custom_arr);
-        }
+        // if(_custom_arr.length == 0){
+        //     this.all_string_arr = this.all_string_arr.concat(this.http_custom_arr);
+        // }
 
         if(this.all_string_arr.length == 0){
             this.all_string_arr = ['#','@','*','、','！','？']
@@ -368,24 +412,15 @@ export default class Helloworld extends cc.Component {
             }
             this.all_string_arr.sort(randomsort);
         }
-
-        // console.log('this.all_string_arr')
-        // console.log(this.all_string_arr)
-
         this.getCurGroupAndShow()
-
-
     }
 
     getCurGroupAndShow(){
-        // console.log('removeAllChildren')
         this.userStringArray = []
         this.node.getChildByName('curStringNode').removeAllChildren(true)
         this.node.getChildByName('userStringNode').removeAllChildren(true)
         // 获取
         this.cur_string_arr = this.all_string_arr.slice(this.all_string_at_index,(this.group_index+1)*this.step_length)
-        // console.log('this.cur_string_arr')
-        // console.log(this.cur_string_arr)
 
         if(this.cur_string_arr.length == 0){
             this.node.getChildByName('EditBox').active = false
@@ -440,247 +475,12 @@ export default class Helloworld extends cc.Component {
     }
 
     start () {
-
-        this.httpGet("http://dazi.jk-kj.com/diy.json", (res) => {
-            this.http_custom_arr = res
-        })
-
-        // console.log('start')
-
-
-        // console.log(window.document)
-
+        // this.httpGet("http://dazi.jk-kj.com/diy.json", (res) => {
+        //     this.http_custom_arr = res
+        // })
         this.printCharArray = []
         this.userStringArray = []
         this.print_char_index = 0
-
-        if(window.document){
-            let that = this
-
-            let _input = document.getElementById('EditBoxId_1')
-            if(_input){
-                _input.setAttribute("autocomplete","off");
-            }
-            
-            let _input2 = document.getElementById('EditBoxId_2')
-            if(_input2){
-                _input2.setAttribute("autocomplete","off");
-            }
-            
-
-            // console.log(_input)
-
-            // 监听键盘按下事件
-
-            window.document.onkeyup = (wevent => {
-
-                let e =  window.event;
-                // 组合键的keycode
-                let zhj_arr = [9,20,16,17,18,13] // 去除 32(空格)，空格有可能是中文输入完毕
-                if(zhj_arr.indexOf(e.keyCode) > -1){
-                    return
-                }
-                
-                let _string = this.node.getChildByName('EditBox').getChildByName('TEXT_LABEL').getComponent(cc.Label).string
-                let _last = _string.substr(_string.length-1,1)
-                if(_last != ''){
-                    this.lastString = _string.substr(_string.length-1,1)
-                    if(this.lastString == '…'){
-                        this.lastString = '……' // 2个
-                    }
-                    if(this.lastString == '—'){
-                        this.lastString = '——' // 2个
-                    }
-                    this.node.getChildByName('EditBox').getComponent(cc.EditBox).string = ''
-                    this.node.getChildByName('EditBox').getChildByName('TEXT_LABEL').getComponent(cc.Label).string = ''
-                    // console.log('this.lastString')
-                    // console.log(this.lastString)
-                }
-
-                that.addUserPrint(this.lastString,that.printCharArray[that.cur_string_at_index].nodeIndex)
-
-
-                if(this.lastString == that.printCharArray[that.cur_string_at_index].charString){
-                    that.printCharArray[that.cur_string_at_index].node.color = cc.Color.YELLOW
-                    that.userStringArray[that.cur_string_at_index].node.color = cc.Color.GREEN
-
-                    if(that.cur_string_at_index == that.cur_last_index){
-                        setTimeout(() => {
-                            that.nextGroup()
-                        },1000)
-                    }
-                    that.cur_string_at_index++
-                    that.all_string_at_index++
-
-                    
-    
-                    
-
-                }else{
-                    that.userStringArray[that.cur_string_at_index].node.color = cc.Color.RED
-
-                }
-            }) 
-
-            window.document.onkeydown = ( (wevent) => {
-
-
-    
-
-                let e =  window.event;
-                // // 获取你按下的键，返回字符串
-                // console.log(e.key);
-                // // 获取你按下的键，返回键码，即数字
-                // console.log(e.keyCode)
-
-                // // 判断你按下w键
-                // // touchCode.innerHTML = e.key.toUpperCase()
-                // console.log('你按下了' + e.key + '键')
-                // console.log('需要的是' + that.printCharArray[that.cur_string_at_index].charString)
-
-
-                // 数字
-                // let all_number_arr = ['0','1','2','3','4','5','6','7','8','9']
-                if(this.all_number_arr.indexOf(e.key) > -1){
-                    that.xin.getChildByName('c'+e.key).color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('c'+e.key).color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                // 字母
-                // let all_letter_arr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
-                if(this.all_letter_arr.indexOf(e.key) > -1){
-                    that.xin.getChildByName(e.key).color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName(e.key).color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                // 符号
-                if(e.keyCode == 192){ // ~`
-                    that.xin.getChildByName('bl').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('bl').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 189){ // -_
-                    that.xin.getChildByName('jian').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('jian').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 187){ // +=
-                    that.xin.getChildByName('jia').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('jia').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 8){ // delete
-                    that.xin.getChildByName('del').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('del').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 219){ // {[
-                    that.xin.getChildByName('zkh').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('zkh').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 221){ // }]
-                    that.xin.getChildByName('ykh').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('ykh').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 220){ // |\
-                    that.xin.getChildByName('shu').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('shu').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 186){ // :;
-                    that.xin.getChildByName('mh').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('mh').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 222){ // "'
-                    that.xin.getChildByName('yh').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('yh').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 188){ // <,
-                    that.xin.getChildByName('xyh').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('xyh').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 190){ // >.
-                    that.xin.getChildByName('dyh').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('dyh').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 191){ // ?/
-                    that.xin.getChildByName('wh').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('wh').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                // 功能键
-                if(e.keyCode == 9){ // 
-                    that.xin.getChildByName('tab').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('tab').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 20){ // 
-                    that.xin.getChildByName('lock').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('lock').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 16){ // 
-                    that.xin.getChildByName('shift-l').color = cc.Color.GREEN
-                    that.xin.getChildByName('shift-r').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('shift-l').color = new cc.Color(255,255,255,255);
-                        that.xin.getChildByName('shift-r').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 17){ // 
-                    that.xin.getChildByName('ctrl-l').color = cc.Color.GREEN
-                    that.xin.getChildByName('ctrl-r').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('ctrl-l').color = new cc.Color(255,255,255,255);
-                        that.xin.getChildByName('ctrl-r').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 18){ // 
-                    that.xin.getChildByName('alt-l').color = cc.Color.GREEN
-                    that.xin.getChildByName('alt-r').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('alt-l').color = new cc.Color(255,255,255,255);
-                        that.xin.getChildByName('alt-r').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 32){ // 
-                    that.xin.getChildByName('space').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('space').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-                if(e.keyCode == 13){ // 
-                    that.xin.getChildByName('enter').color = cc.Color.GREEN
-                    setTimeout(() =>{
-                        that.xin.getChildByName('enter').color = new cc.Color(255,255,255,255);
-                    },100)
-                }
-            })
-        }
-
-
     }
     toggle1Click(){
         this.is_open_rand = false
@@ -689,45 +489,6 @@ export default class Helloworld extends cc.Component {
         this.is_open_rand = true
     }
 
-    // onKeyDown(event) {
-    //     console.log(event)
-    //     console.log(window)
-
-
-
-        
-    //     switch(event.keyCode) {
-    //         case 192:
-    //             console.log('c01')
-    //             this.xin.getChildByName('c01').color = cc.Color.RED
-    //             if(this.print_char_arr[this.print_char_index] == '~'){
-    //                 this.printCharArray[this.print_char_index].node.active = false
-    //             }
-                
-    //             break;
-    //         case cc.macro.KEY[0]:
-    //             console.log('0')
-    //             this.xin.getChildByName('c0').color = cc.Color.RED
-    //             break;
-    //         case 187: // +
-    //             this.xin.getChildByName('jia').color = cc.Color.RED
-    //             break;
-    //     }
-    // }
-    // onKeyUp(event){
-    //     switch(event.keyCode) {
-    //         case 192:
-    //             this.xin.getChildByName('c01').color = new cc.Color(255,255,255,255);
-    //             break;
-    //         case cc.macro.KEY[0]:
-    //             console.log('0')
-    //             this.xin.getChildByName('c0').color = new cc.Color(255,255,255,255);
-    //             break;
-    //         case 187: // +
-    //         this.xin.getChildByName('jia').color = new cc.Color(255,255,255,255);
-    //         break;
-    //     }
-    // }
     httpGet(url, callback) {
         // cc.myGame.gameUi.onShowLockScreen();
         let xhr = cc.loader.getXMLHttpRequest();
@@ -744,8 +505,6 @@ export default class Helloworld extends cc.Component {
             } else {
                 //callback(-1);
             }
- 
- 
         };
         xhr.withCredentials = true;
         xhr.open('GET', url, true);
