@@ -69,6 +69,7 @@ export default class Helloworld extends cc.Component {
     all_f_zh_arr:Array<string> = []
     all_f_shift_zh_arr:Array<string> = []
     all_f_keycode_arr:Array<Number> = null;
+    all_g_keycode_arr:Array<Number> = null;
 
 
     // 整条生成的需要打印的文字
@@ -154,6 +155,9 @@ export default class Helloworld extends cc.Component {
         this.all_f_shift_zh_arr = ["：","+","《","——","》","？","~","「","|","」","“"];
         this.all_f_keycode_arr = [186,187,188,189,190,191,192,219,220,221,222];
 
+        this.all_g_keycode_arr = [8,9,13,16,17,18,20,32,91];
+
+
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
@@ -173,6 +177,7 @@ export default class Helloworld extends cc.Component {
         console.log('e.keyCode',e.keyCode)
         let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
         let _in_f_index = this.all_f_keycode_arr.indexOf(e.keyCode)
+        let _in_g_index = this.all_g_keycode_arr.indexOf(e.keyCode)
         if(_in_number_index > -1){
             this.xin.getChildByName('c_'+e.keyCode).color = cc.Color.GREEN
             setTimeout(() =>{
@@ -185,8 +190,29 @@ export default class Helloworld extends cc.Component {
                 this.xin.getChildByName('f_'+e.keyCode).color = new cc.Color(255,255,255,255);
             },100)
         }
+        if(_in_g_index > -1){
+
+            if([16,17,18,91].indexOf(e.keyCode) > -1){
+                this.xin.getChildByName('g_'+e.keyCode+'_l').color = cc.Color.GREEN
+                setTimeout(() =>{
+                    this.xin.getChildByName('g_'+e.keyCode+'_l').color = new cc.Color(255,255,255,255);
+                },100)
+                this.xin.getChildByName('g_'+e.keyCode+'_r').color = cc.Color.GREEN
+                setTimeout(() =>{
+                    this.xin.getChildByName('g_'+e.keyCode+'_r').color = new cc.Color(255,255,255,255);
+                },100)
+            }else{
+                this.xin.getChildByName('g_'+e.keyCode).color = cc.Color.GREEN
+                setTimeout(() =>{
+                    this.xin.getChildByName('g_'+e.keyCode).color = new cc.Color(255,255,255,255);
+                },100)
+            }
+
+
+        }
     }
     onKeyUp(e){
+        console.log('key up')
         let _key_index = this.has_down_keycode_arr.indexOf(e.keyCode)
         if(_key_index > -1){
             this.has_down_keycode_arr.splice(_key_index,1); // 从has_down_keycode_arr中移除
@@ -196,6 +222,15 @@ export default class Helloworld extends cc.Component {
         let _string = '';
         let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
         let _in_f_index = this.all_f_keycode_arr.indexOf(e.keyCode)
+        // 按住ctrl的情况  （可能是切换中中文）
+        if(this.has_down_keycode_arr.indexOf(17) > -1){
+            if(e.keyCode == 16){
+                this.langBtnClick()
+            }
+            if(e.keyCode == 32){
+                this.langBtnClick()
+            }
+        }
         // 按住shift的情况
         if(this.has_down_keycode_arr.indexOf(16) > -1){
             if(_in_number_index > -1){
@@ -233,12 +268,11 @@ export default class Helloworld extends cc.Component {
         }
     }
     langBtnClick(){
+        console.log('langBtnClick')
         this.is_chinese = !this.is_chinese
         let lang_name = this.is_chinese ? '中' : 'En'
         this.langBtn.node.getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = lang_name
     }
-
-
     togetherMenu(){
         this.menu.active = !this.menu.active
     }
