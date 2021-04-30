@@ -53,8 +53,9 @@ export default class Helloworld extends cc.Component {
 
 
     all_number_arr:Array<string> = []
-    all_number_tran_arr:Array<string> = []
     all_number_zh_arr:Array<string> = []
+    all_number_shift_arr:Array<string> = []
+    all_number_shift_zh_arr:Array<string> = []
     all_letter_arr:Array<string> = []
     all_letterupper_arr:Array<string> = []
     all_fuhao_arr:Array<string> = []
@@ -62,6 +63,12 @@ export default class Helloworld extends cc.Component {
     all_custom_arr:Array<string> = []
 
     all_number_keycode_arr:Array<Number> = null;
+
+    all_f_arr:Array<string> = []
+    all_f_shift_arr:Array<string> = []
+    all_f_zh_arr:Array<string> = []
+    all_f_shift_zh_arr:Array<string> = []
+    all_f_keycode_arr:Array<Number> = null;
 
 
     // 整条生成的需要打印的文字
@@ -130,16 +137,23 @@ export default class Helloworld extends cc.Component {
 
 
         this.all_number_arr = ['0','1','2','3','4','5','6','7','8','9']
-        this.all_number_zh_arr = ['）','！','@','#','￥','%','……','&','*','（']
-        this.all_number_tran_arr = [')','!','@','#','$','%','^','&','*','(']
+        this.all_number_shift_arr = [')','!','@','#','$','%','^','&','*','(']
+        this.all_number_zh_arr = ['0','1','2','3','4','5','6','7','8','9']
+        this.all_number_shift_zh_arr = ['）','！','@','#','￥','%','……','&','*','（']
         this.all_number_keycode_arr = [48,49,50,51,52,53,54,55,56,57]
         
         this.all_letter_arr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
         this.all_letterupper_arr = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
         this.all_fuhao_arr = ['~','`','!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|','\\',':',';','"','\'','<','>',',','.','?','/'];
         this.all_zwfuhao_arr = ['~','·','！','@','#','￥','%','……','&','*','（','）','-','——','+','=','「','」','【','】','|','、','：','；','“','”','‘','’','《','》','，','。','？','、'];
-
         
+        
+        this.all_f_arr = [";","=",",","-",".","/","`","[","\\","]","'"];
+        this.all_f_shift_arr = [":","+","<","_",">","？","~","{","|","}","\""];
+        this.all_f_zh_arr = ["；","=","，","-","。","、","·","【","、","】","’"];
+        this.all_f_shift_zh_arr = ["：","+","《","——","》","？","~","「","|","」","“"];
+        this.all_f_keycode_arr = [186,187,188,189,190,191,192,219,220,221,222];
+
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this);
@@ -157,10 +171,18 @@ export default class Helloworld extends cc.Component {
         console.log(JSON.stringify(this.has_down_keycode_arr) )
         console.log('key down')
         console.log('e.keyCode',e.keyCode)
-        if(this.all_number_keycode_arr.indexOf(e.keyCode) > -1){
+        let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
+        let _in_f_index = this.all_f_keycode_arr.indexOf(e.keyCode)
+        if(_in_number_index > -1){
             this.xin.getChildByName('c_'+e.keyCode).color = cc.Color.GREEN
             setTimeout(() =>{
                 this.xin.getChildByName('c_'+e.keyCode).color = new cc.Color(255,255,255,255);
+            },100)
+        }
+        if(_in_f_index > -1){
+            this.xin.getChildByName('f_'+e.keyCode).color = cc.Color.GREEN
+            setTimeout(() =>{
+                this.xin.getChildByName('f_'+e.keyCode).color = new cc.Color(255,255,255,255);
             },100)
         }
     }
@@ -173,19 +195,37 @@ export default class Helloworld extends cc.Component {
         console.log(JSON.stringify(this.has_down_keycode_arr) )
         let _string = '';
         let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
+        let _in_f_index = this.all_f_keycode_arr.indexOf(e.keyCode)
         // 按住shift的情况
         if(this.has_down_keycode_arr.indexOf(16) > -1){
             if(_in_number_index > -1){
                 if(this.is_chinese){
-                    _string = this.all_number_zh_arr[_in_number_index]
+                    _string = this.all_number_shift_zh_arr[_in_number_index]
                 }else{
-                    _string = this.all_number_tran_arr[_in_number_index]
+                    _string = this.all_number_shift_arr[_in_number_index]
+                }
+            }
+            if(_in_f_index > -1){
+                if(this.is_chinese){
+                    _string = this.all_f_shift_zh_arr[_in_f_index]
+                }else{
+                    _string = this.all_f_shift_arr[_in_f_index]
                 }
             }
         }else{
             if(_in_number_index > -1){
-                _string = this.all_number_arr[_in_number_index]
-                console.log(_string)
+                if(this.is_chinese){
+                    _string = this.all_number_zh_arr[_in_number_index]
+                }else{
+                    _string = this.all_number_arr[_in_number_index]
+                }
+            }
+            if(_in_f_index > -1){
+                if(this.is_chinese){
+                    _string = this.all_f_zh_arr[_in_f_index]
+                }else{
+                    _string = this.all_f_arr[_in_f_index]
+                }
             }
         }
         if(_string != ''){
