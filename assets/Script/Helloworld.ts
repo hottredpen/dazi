@@ -95,8 +95,13 @@ export default class Helloworld extends cc.Component {
     langBtn:cc.Button = null
     is_upper:boolean = false
     upperBtn:cc.Button = null
+    at_right:boolean = true
+    xia_yin_hao:boolean = false
+    cur_str_node:cc.Node = null
 
     onLoad(){
+        this.xia_yin_hao = false
+        this.at_right = true
         this.is_chinese = false
         this.is_upper = false
         this.is_open_rand = true
@@ -152,7 +157,7 @@ export default class Helloworld extends cc.Component {
         this.all_letter_arr = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
         this.all_letterupper_arr = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
         this.all_fuhao_arr = ['~','`','!','@','#','$','%','^','&','*','(',')','-','_','+','=','{','}','[',']','|','\\',':',';','"','\'','<','>',',','.','?','/'];
-        this.all_zwfuhao_arr = ['~','·','！','@','#','￥','%','……','&','*','（','）','-','——','+','=','「','」','【','】','|','、','：','；','“','‘','’','《','》','，','。','？','、'];
+        this.all_zwfuhao_arr = ['~','·','！','@','#','￥','%','……','&','*','（','）','-','——','+','=','「','」','【','】','|','、','：','；','“','”','‘','’','《','》','，','。','？','、'];
         
         this.all_letter_keycode_arr = [65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90];
         
@@ -232,6 +237,19 @@ export default class Helloworld extends cc.Component {
         let _in_number_index = this.all_number_keycode_arr.indexOf(e.keyCode)
         let _in_f_index = this.all_f_keycode_arr.indexOf(e.keyCode)
         let _in_z_index = this.all_letter_keycode_arr.indexOf(e.keyCode)
+        let _in_g_index = this.all_g_keycode_arr.indexOf(e.keyCode)
+
+        if(_in_g_index > -1){
+            // 删除键
+            if(e.keyCode == 8){
+                if(this.at_right == false){
+                    // 删除当前的 ’‘’‘
+                    this.userStringArray[this.cur_string_at_index]=null
+                    this.node.getChildByName('userStringNode').removeChild(this.cur_str_node)
+                }
+            }
+        }
+
         // 按住ctrl的情况  （可能是切换中中文）
         if(this.has_down_keycode_arr.indexOf(17) > -1){
             if(e.keyCode == 16){
@@ -252,7 +270,12 @@ export default class Helloworld extends cc.Component {
             }
             if(_in_f_index > -1){
                 if(this.is_chinese){
-                    _string = this.all_f_shift_zh_arr[_in_f_index]
+                    if(e.keyCode == 222){
+                        this.xia_yin_hao = !this.xia_yin_hao
+                        _string = this.xia_yin_hao ? '”' : '“'
+                    }else{
+                        _string = this.all_f_shift_zh_arr[_in_f_index]
+                    }
                 }else{
                     _string = this.all_f_shift_arr[_in_f_index]
                 }
@@ -274,7 +297,12 @@ export default class Helloworld extends cc.Component {
             }
             if(_in_f_index > -1){
                 if(this.is_chinese){
-                    _string = this.all_f_zh_arr[_in_f_index]
+                    if(e.keyCode == 222){
+                        this.xia_yin_hao = !this.xia_yin_hao
+                        _string = this.xia_yin_hao ? '’' : '‘'
+                    }else{
+                        _string = this.all_f_zh_arr[_in_f_index]
+                    }
                 }else{
                     _string = this.all_f_arr[_in_f_index]
                 }
@@ -300,7 +328,9 @@ export default class Helloworld extends cc.Component {
                 }
                 this.cur_string_at_index++
                 this.all_string_at_index++
+                this.at_right = true
             }else{
+                this.at_right = false
                 this.userStringArray[this.cur_string_at_index].node.color = cc.Color.RED
             }
         }
@@ -468,6 +498,7 @@ export default class Helloworld extends cc.Component {
             _node.y = 0
     
             this.userStringArray[_index] = printChar
+            this.cur_str_node = _node
             this.node.getChildByName('userStringNode').addChild(_node)
         }
         
